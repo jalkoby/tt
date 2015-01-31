@@ -47,34 +47,6 @@ describe TT::Translator do
     end
   end
 
-  describe '#tip' do
-    it "looks for a namespace translation first" do
-      assert_equal @tt.tip(:info), "namespace_info"
-    end
-
-    it "falls back to a global translation" do
-      assert_equal @tt.tip(:notice), "global_notice"
-    end
-
-    it "allows a custom options" do
-      assert_equal @tt.tip(:tipsy, default: "default_tipsy"), "default_tipsy"
-    end
-  end
-
-  describe '#crumb' do
-    it "looks for a namespace translation first" do
-      assert_equal @tt.crumb(:new), "namespace_new"
-    end
-
-    it "falls back to a global translation" do
-      assert_equal @tt.crumb(:index), "global_index"
-    end
-
-    it "allows a custom options" do
-      assert_equal @tt.crumb(:show, default: "default_show"), "default_show"
-    end
-  end
-
   describe 'a model related methods' do
     before do
       @klass = Minitest::Mock.new

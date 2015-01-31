@@ -1,7 +1,17 @@
+require "active_support/lazy_load_hooks"
 require "i18n"
 
 module TT
   class Translator
+    def self.shortcut(meth_name, section)
+      class_eval <<-RUBY
+        def #{ meth_name }(key, options = {})
+          I18n.t "\#{ ns }.#{ section }.\#{ key }",
+            { default: :"#{ section }.\#{ key }" }.merge(options)
+        end
+      RUBY
+    end
+
     def initialize(ns, section)
       @ns = ns
       @section = section
@@ -12,25 +22,8 @@ module TT
         { default: :"#{ ns }.common.#{ key  }" }.merge(options)
     end
 
-    def c(key, options = {})
-      I18n.t "#{ ns }.common.#{ key }",
-        { default: :"common.#{ key }" }.merge(options)
-    end
-
-    def f(key, options = {})
-      I18n.t "#{ ns }.form.#{ key }",
-        { default: :"form.#{ key }" }.merge(options)
-    end
-
-    def tip(key, options = {})
-      I18n.t "#{ ns }.tooltip.#{ key }",
-        { default: :"tooltip.#{ key }" }.merge(options)
-    end
-
-    def crumb(key, options = {})
-      I18n.t "#{ ns }.crumbs.#{ key }",
-        { default: :"crumbs.#{ key }" }.merge(options)
-    end
+    shortcut :c, :common
+    shortcut :f, :form
 
     def attr(name, klass = context_klass)
       klass.human_attribute_name(name)
@@ -43,14 +36,17 @@ module TT
     def resource(klass = context_klass)
       klass.model_name.human(count: 1)
     end
+    alias_method :record, :resource
 
     def resources(klass = context_klass)
       klass.model_name.human(count: 10)
     end
+    alias_method :records, :resources
 
     def no_resources(klass = context_klass)
       klass.model_name.human(count: 0)
     end
+    alias_method :no_records, :no_resources
 
     private
 
@@ -61,12 +57,14 @@ module TT
 
       @context_klass = ns.split('.').map(&:classify).join('::').singularize.constantize
     end
+
+    ActiveSupport.run_load_hooks(:tt, self)
   end
 end
 
-if defined?(ActionPack)
-  module ::TT::ActionPack
-    extend ActiveSupport::Concern
+if defined?(ActionPack) || defined?(ActionMailer)
+  module TT::Helper
+    extend ::ActiveSupport::Concern
 
     included do
       helper_method :tt
@@ -81,6 +79,10 @@ if defined?(ActionPack)
   end
 
   ActiveSupport.on_load(:action_controller) do
-    include ::TT::ActionPack
+    include ::TT::Helper
+  end
+
+  ActiveSupport.on_load(:action_mailer) do
+    include ::TT::Helper
   end
 end
