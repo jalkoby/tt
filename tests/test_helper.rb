@@ -4,30 +4,22 @@ require "rack/test"
 require "action_controller"
 require "t_t"
 
-ViewTranslator = Class.new(TT::Translator) do
+ViewTranslator = TT.fork do
   lookup_key_method :f, :form
 end
 
-ModelTranslator = Class.new(TT::Translator)
+ARTranslator = TT.fork do
+  settings orm: :activerecord, downcase: lambda { |str| str.mb_chars.downcase }
+end
 
 I18n.backend = I18n::Backend::Simple.new
-I18n.backend.store_translations(:en, {
-  common: {
-    tar: 'global_tar'
-  },
-  form: {
-    edit: "global_edit",
-    save: "global_save"
-  },
-  tt: {
-    common: {
-      foo: "namespace_foo"
-    },
-    form: {
-      edit: "namespace_edit"
-    },
-    spec: {
-      foo: "spec_foo"
-    }
-  }
-})
+
+class Minitest::Spec
+  after :each do
+    I18n.backend.reload!
+  end
+
+  def load_i18n(data)
+    I18n.backend.store_translations(:en, data)
+  end
+end

@@ -6,6 +6,13 @@ describe 'methods related to views' do
   end
 
   describe '#t' do
+    before do
+      load_i18n(tt: {
+        common: { foo: "namespace_foo" },
+        spec: { foo: "spec_foo" }
+      })
+    end
+
     it "looks for a section translation first" do
       assert_equal @tt.t(:foo), "spec_foo"
     end
@@ -16,6 +23,13 @@ describe 'methods related to views' do
   end
 
   describe '#c' do
+    before do
+      load_i18n(
+        common: { tar: 'global_tar' },
+        tt: { common: { foo: "namespace_foo" }, }
+      )
+    end
+
     it "looks for a namespace translation first" do
       assert_equal @tt.c(:foo), "namespace_foo"
     end
@@ -30,6 +44,13 @@ describe 'methods related to views' do
   end
 
   describe '#f' do
+    before do
+      load_i18n(
+        form: { edit: "global_edit", save: "global_save" },
+        tt: { form: { edit: "namespace_edit" } }
+      )
+    end
+
     it "looks for a namespace translation first" do
       assert_equal @tt.f(:edit), "namespace_edit"
     end

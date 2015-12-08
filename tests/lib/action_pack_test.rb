@@ -14,6 +14,7 @@ describe "ActionPack integration" do
   end
 
   it 'calls #t if args were passed' do
+    load_i18n(common: { tar: 'global_tar' })
     assert_equal @controller.tt.c(:tar), 'global_tar'
   end
 end
