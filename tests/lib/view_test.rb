@@ -8,13 +8,17 @@ describe 'methods related to views' do
   describe '#t' do
     before do
       load_i18n(tt: {
-        common: { foo: "namespace_foo" },
+        common: { too: "namespace_too" },
         spec: { foo: "spec_foo" }
       })
     end
 
     it "looks for a section translation first" do
       assert_equal @tt.t(:foo), "spec_foo"
+    end
+
+    it "looks into the section commons" do
+      assert_equal @tt.t(:too), "namespace_too"
     end
 
     it "allows a custom options" do

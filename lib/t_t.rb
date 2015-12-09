@@ -3,18 +3,24 @@ require "active_support/lazy_load_hooks"
 require "i18n"
 
 module TT
-  module Lookup
+  module Utils
     extend self
 
-    def build(orm)
-      orm ? orm(orm) : simple
+    DOWNCASE = lambda { |str| str.downcase }
+
+    def lookup(orm)
+      orm ? orm_lookup(orm) : simple_lookup
+    end
+
+    def to_parts(str)
+      str.to_s.underscore.split(/\.|\//)
     end
 
     private
 
-    def simple
+    def simple_lookup
       lambda do |ns, type|
-        parts = ns.to_s.underscore.split('/')
+        parts = to_parts(ns)
         model_path = parts.join('.')
 
         root = "#{ type }.#{ model_path }"
@@ -27,9 +33,9 @@ module TT
       end
     end
 
-    def orm(prefix)
+    def orm_lookup(prefix)
       lambda do |ns, type|
-        parts = ns.to_s.underscore.split('/')
+        parts = to_parts(ns)
         model_path = parts.join('.')
 
         root = "#{ prefix }.#{ type }.#{ model_path }"
@@ -78,15 +84,16 @@ module TT
     lookup_key_method :c, :common
 
     def initialize(ns, section = nil)
+      @lookup = Utils.lookup(self.class.settings[:orm])
+
+      ns = Utils.to_parts(ns).join('.')
       @config = { ns: ns, root: (section ? "#{ ns }.#{ section }" : ns) }
-
-      @lookup = Lookup.build(self.class.settings[:orm])
-      @downcase = self.class.settings.fetch(:downcase, lambda { |str| str.downcase })
-
       default_model = ns.to_s.singularize
       [:actions, :attributes, :enums, :errors, :models].each do |i|
         @config[i] = @lookup.call(default_model, i)
       end
+
+      @downcase = self.class.settings.fetch(:downcase, Utils::DOWNCASE)
     end
 
     def a(name, model_name = nil, custom = {})
@@ -127,8 +134,9 @@ module TT
       I18n.t path, default: defaults, count: count
     end
 
-    def t(key, options = {})
-      I18n.t "#{ _config.fetch(:root) }.#{ key  }", options
+    def t(key, custom = {})
+      defaults = [:"#{ _config.fetch(:ns) }.common.#{ key }"].concat(Array(custom[:default]))
+      I18n.t "#{ _config.fetch(:root) }.#{ key  }", custom.merge(default: defaults)
     end
 
     private
@@ -164,12 +172,13 @@ if defined?(ActionPack) || defined?(ActionMailer)
 
     included do
       helper_method :tt
+
+      prepend_before_filter { instance_variable_set(:@tt, ::TT::Translator.new(controller_path, action_name)) }
     end
 
     private
 
     def tt(*args)
-      @tt ||= ::TT::Translator.new(controller_path, action_name)
       args.empty? ? @tt : @tt.t(*args)
     end
   end

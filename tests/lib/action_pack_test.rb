@@ -7,6 +7,7 @@ end
 describe "ActionPack integration" do
   before do
     @controller = TTController.new
+    @controller.run_callbacks(:process_action)
   end
 
   it 'returns tt instance if the method was called without args' do
