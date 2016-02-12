@@ -191,3 +191,9 @@ if defined?(ActionPack) || defined?(ActionMailer)
     include ::TT::Helper
   end
 end
+
+if defined?(ActiveRecord)
+  ActiveSupport.on_load(:active_record) do
+    TT.config(orm: :activerecord)
+  end
+end
