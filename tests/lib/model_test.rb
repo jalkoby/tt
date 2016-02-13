@@ -2,7 +2,7 @@ require 'test_helper'
 
 describe 'Methods related to models' do
   before do
-    @tt = ViewTranslator.new("admin/users", "spec")
+    @tt = ARTranslator.new("admin/users", "spec")
   end
 
   describe 'actions' do
@@ -96,7 +96,7 @@ describe 'Methods related to models' do
   describe 'errors' do
     before do
       load_i18n(errors: {
-        base: { name: { blank: "should be filled" }, fields_missed: "not all required fields are filled" },
+        messages: { name: { blank: "should be filled" }, fields_missed: "not all required fields are filled" },
         user: { password: { weak: "Your password is weak" }, limit: 'The limit has been reached', duplicated: "The site has an account with the inputed information" },
         admin: { user: { email: { empty: "The admin email should be filled" }, limit: "The system has reached the admin limit" } }
       })
@@ -124,6 +124,7 @@ describe 'Methods related to models' do
 
     it 'returns a base error' do
       assert_equal @tt.e(:base, :fields_missed), 'not all required fields are filled'
+      assert_equal @tt.e(:roo, :fields_missed), 'not all required fields are filled'
     end
 
     it 'allows to specify a custom model' do
