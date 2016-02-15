@@ -16,21 +16,79 @@ Just add `gem "t_t"` into your Gemfile and run `bundle`.
 
 ## Usage
 
-Dos-T adds an extra helper method `tt` into your controllers, mailers & views (for a "non-rails" case look at [Configuration](#configuration) section below).
-The best way to show its features is to show a problem and how Dos-T solves it.
+Dos-T adds an extra helper method `tt` into your controllers, mailers & views. A brief look at its features:
 
-#### Common translations
+```Haml
+# en:
+#   actions:
+#     add:
+#       base: "Add a new %{r}"
+#   attributes:
+#     user:
+#       name: "Name"
+#       email: "Email"
+#       role: "Role"
+#   common:
+#     actions: "Actions"
+#     confirm: "Are you sure?"
+#     edit: "Edit"
+#     delete: "Delete"
+#   enums:
+#     user:
+#       role:
+#         a: "Admin"
+#         g: "Guest"
+#         m: "Manager"
+#   models:
+#     user:
+#       one: "User"
+#       other: "Users"
 
-#### Attributes
+# app/views/users/index.haml
+%h2= tt.rs :user
 
-#### Enums
+%table
+  %thead
+    %th= tt.attr :name
+    %th= tt.attr :email
+    %th= tt.attr :role
+    %th= tt.c :actions
 
-#### Resources
+  %tbody
+    - @users.each do |user|
+      %tr
+        %td= user.name
+        %td= user.email
+        %td= tt.enum :role, user.role
+        %td
+          = link_to tt.c(:edit), edit_user_path(user)
+          = link_to tt.c(:delete), user_path(user), method: :delete, confirm: tt.c(:confirm)
 
-#### Actions
+= link_to tt.a(:add), new_user_path
+```
 
-#### Custom lookups
+The result will be the next:
+```Haml
+%h2 Users
 
-## Configuration
+%table
+  %thead
+    %th Name
+    %th Email
+    %th Role
+    %th Actions
 
-If an application uses the default rails stack (ActionPack + ActiveRecord) there is nothing to change.
+  %tbody
+    - @users.each do |user|
+      %tr
+        %td= user.name
+        %td= user.email
+        %td= { 'a' => 'Admin', 'g' => 'Guest', 'm' => 'Manager' }[user.role]
+        %td
+          = link_to 'Edit', edit_user_path(user)
+          = link_to 'Delete', user_path(user), method: :delete, confirm: 'Are you sure?'
+
+= link_to 'Add a new user', new_user_path
+```
+
+The best way to explain all features is to look at [Cheatsheet](./cheatsheet.md).
