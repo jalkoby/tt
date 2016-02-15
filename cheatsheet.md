@@ -35,46 +35,46 @@ Every rails developer is familiar with helper method **#t** which has a magic tr
 plug-in has an alternative for it **tt.t(key)** or **tt(key)** which is a little bit simple, faster and has a default
 fallback. Let's look at a common scenario:
 
-```haml
+```ruby
 # en:
 #   blogs:
 #     new:
 #       help: "The content should not contain a markdown"
 
 # app/views/blogs/new.haml
-%p= t('.help')
+= t('.help')
 
 # with the gem
-%p= tt(:help)
+= tt(:help)
 ```
 
 At the first look there is not a big difference. Until you need to use a same translation in a few controller actions:
-```haml
+```ruby
 # en:
 #   blogs:
 #     new:
 #       help: "The content should not contain a markdown"
 
 # app/views/blogs/new.haml
-%p= t('.help')
+= t('.help')
 
 # app/views/blogs/edit.haml
-%p= t('blogs.new.help')
+= t('blogs.new.help')
 ```
 
 With Dos-T it's not a case, just put a common translation into `common` sub-key of a controller's translation namespace:
 
-```haml
+```ruby
 # en:
 #   blogs:
 #     common:
 #       help: "The content should not contain a markdown"
 
 # app/views/blogs/new.haml
-%p= tt(:help)
+= tt(:help)
 
 # app/views/blogs/edit.haml
-%p= tt(:help)
+= tt(:help)
 ```
 
 ## Attributes
