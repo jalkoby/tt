@@ -9,14 +9,6 @@ Dos-T introduces a translation convention for a ruby web application (with a foc
 - easy to use from day one & minimum to write (nobody likes to write a long and obvious method names)
 - have a clear defaults
 
-## Requirements
-
-Dos-T is tested against Ruby 1.9.3+. If your application uses Ruby on Rails the framework version should be 3.2+
-
-## Setup
-
-Just add `gem "t_t"` into your Gemfile and run `bundle`.
-
 ## Usage
 
 Dos-T adds an extra helper method `tt` into your controllers, mailers & views. The best way to explain all features
@@ -94,3 +86,11 @@ The result will be the next:
 
 = link_to 'Add a new user', new_user_path
 ```
+
+## Setup
+
+Just add `gem "t_t"` into your Gemfile and run `bundle`. 
+
+## Requirements
+
+Dos-T is tested against Ruby 1.9.3+. If your application uses Ruby on Rails the framework version should be 3.2+
