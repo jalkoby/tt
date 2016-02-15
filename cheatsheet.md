@@ -225,10 +225,10 @@ end
 ```
 
 As you can see in translation you define a base translation for an action which expected at least the next variables:
-- RS  - tt.rs
-- R   - tt.r
-- rs  - tt.rs.downcase
-- r   - tt.r.downcase
+- RS  - `tt.rs`
+- R   - `tt.r`
+- rs  - `tt.rs.downcase`
+- r   - `tt.r.downcase`
 
 If for some action one of the models should have a custom translation (a business logic, a grammar rule of a language)
 just add a model name key in a action translations:

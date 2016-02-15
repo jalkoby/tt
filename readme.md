@@ -1,5 +1,8 @@
 # Dos-T
 
+[![Build Status](https://travis-ci.org/jalkoby/tt.svg?branch=master)](https://travis-ci.org/jalkoby/tt)
+[![Gem Version](https://badge.fury.io/rb/t_t.svg)](https://badge.fury.io/rb/t_t)
+
 Dos-T introduces a translation convention for a ruby web application (with a focus on the rails flow). The library is based on the next ideas:
 - focus on a every day issues
 - reduce amount of duplications inside translation files
@@ -16,7 +19,8 @@ Just add `gem "t_t"` into your Gemfile and run `bundle`.
 
 ## Usage
 
-Dos-T adds an extra helper method `tt` into your controllers, mailers & views. A brief look at its features:
+Dos-T adds an extra helper method `tt` into your controllers, mailers & views. The best way to explain all features
+is to look at [Cheatsheet](./cheatsheet.md). The below is shown a brief overview:
 
 ```Haml
 # en:
@@ -90,5 +94,3 @@ The result will be the next:
 
 = link_to 'Add a new user', new_user_path
 ```
-
-The best way to explain all features is to look at [Cheatsheet](./cheatsheet.md).
