@@ -1,0 +1,111 @@
+en:
+  # view related
+  common:
+    actions: Actions
+    confirm: Are you sure?
+    ok: Ok
+    export: Export
+    import: Import
+    more: More
+    search: Search
+    via: via
+  form:
+    add: Add
+    back: Back
+    close: Close
+    cancel: Cancel
+    change: Change
+    copy: Copy
+    create: Create
+    delete: Delete
+    edit: Edit
+    save: Save
+    select: Select
+    update: Update
+    upload: Upload
+    preview: Preview
+  tooltip:
+    add_all: Add all
+    add_new: Add new
+    choose_file: Choose a file
+    copy: Copy
+    delete: Delete
+    edit: Edit
+    reset: Reset
+    reset_password: Reset password
+    update: Update
+    view: View
+    remove_all: Remove all
+
+  # resource related
+  attributes:
+    base:
+      created_at: Created at
+      description: Description
+      email: Email
+      first_name: First name
+      last_name: Last name
+      name: Name
+      phone: Phone
+      position: Position
+      title: Title
+      updated_at: Updated at
+    user:
+      email: Email / Login
+      role: User role
+    task:
+      sort_key: Sort key
+      type: Type
+    task_list:
+      reminders_count: Number of reminders
+      tasks_count: Number of tasks
+  models:
+    icon:
+      one: Icon
+      other: Icons
+    user:
+      one: User
+      other: Users
+    user_group:
+      one: User group
+      other: User groups
+    task:
+      one: Task
+      other: Tasks
+    task_list:
+      one: Task list
+      other: Task lists
+  enums:
+    user:
+      role:
+        ai: Administrator
+        ui: Employee
+        guest: Guest
+    task:
+      type:
+        reminder: Reminder
+        task: Task
+
+  # error related
+  errors:
+    messages:
+      inclusion: is not included in the list
+      exclusion: is reserved
+      already_exists: has already been taken
+      taken: has already been taken
+    user:
+      email:
+        used: Another user registered with this email
+    task:
+      task_list_ids:
+        blank: Select at least one task list
+  # action related
+  actions:
+    choose_few:
+      base: Choose one or more %{rs}
+    create:
+      base: "The %{r} has been created"
+      task: "The %{r} hass been added"
+    select_before:
+      base: "Please choose a %{r} before"
+      icon: "Please choose an %{r} before"

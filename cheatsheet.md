@@ -1,6 +1,7 @@
 # Dos-T cheatsheet
 
 ## Commons
+
 The **widely used words** across the application such as "Back", "Cancel", "Save" are the prime candidates to put in **common**:
 
 ```ruby
@@ -26,6 +27,54 @@ Time to time there is a need to **override commons** for a section (controller i
 
 # app/views/users/index.haml
 = tt.c :copy # => "Duplicate"
+```
+
+## Relative translation
+
+Every rails developer is familiar with helper method **#t** which has a magic trick with a dot at the beginning. The
+plug-in has an alternative for it **tt.t(key)** or **tt(key)** which is a little bit simple, faster and has a default
+fallback. Let's look at a common scenario:
+
+```haml
+# en:
+#   blogs:
+#     new:
+#       help: "The content should not contain a markdown"
+
+# app/views/blogs/new.haml
+%p= t('.help')
+
+# with the gem
+%p= tt(:help)
+```
+
+At the first look there is not a big difference. Until you need to use a same translation in a few controller actions:
+```haml
+# en:
+#   blogs:
+#     new:
+#       help: "The content should not contain a markdown"
+
+# app/views/blogs/new.haml
+%p= t('.help')
+
+# app/views/blogs/edit.haml
+%p= t('blogs.new.help')
+```
+
+With Dos-T it's not a case, just put a common translation into `common` sub-key of a controller's translation namespace:
+
+```haml
+# en:
+#   blogs:
+#     common:
+#       help: "The content should not contain a markdown"
+
+# app/views/blogs/new.haml
+%p= tt(:help)
+
+# app/views/blogs/edit.haml
+%p= tt(:help)
 ```
 
 ## Attributes
@@ -79,6 +128,7 @@ For other `active_model` based orms please specify configuration in an initializ
 # app/config/tt.rb
 TT.config(prefix: :mongoid)
 ```
+
 ## Resources
 
 There is another translation hard-to-use feature which are present in `active_model` - **.model_name.human**. It

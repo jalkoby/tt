@@ -89,7 +89,7 @@ The result will be the next:
 
 ## Setup
 
-Just add `gem "t_t"` into your Gemfile and run `bundle`. 
+Just add `gem "t_t"` into your Gemfile and run `bundle`.
 
 ## Requirements
 
