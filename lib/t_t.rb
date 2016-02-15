@@ -9,8 +9,8 @@ module TT
 
     DOWNCASE = lambda { |str, locale| (locale == :en) ? str.downcase : str.mb_chars.downcase.to_s }
 
-    def lookup(orm, base_suffix = :base)
-      orm ? orm_lookup(orm, base_suffix) : simple_lookup(base_suffix)
+    def lookup(prefix, base_suffix = :base)
+      prefix ? prefix_lookup(prefix, base_suffix) : simple_lookup(base_suffix)
     end
 
     def to_parts(str)
@@ -34,7 +34,7 @@ module TT
       end
     end
 
-    def orm_lookup(prefix, base_suffix)
+    def prefix_lookup(prefix, base_suffix)
       lambda do |ns, type|
         parts = to_parts(ns)
         model_path = parts.join('.')
@@ -70,7 +70,7 @@ module TT
         @settings ||= {}
 
         if custom
-          unknown = custom.keys.detect { |key| ![:downcase, :orm].include?(key) }
+          unknown = custom.keys.detect { |key| ![:downcase, :prefix].include?(key) }
           if unknown
             raise ArgumentError, "TT doesn't know `#{ unknown }` option in the configuration"
           else
@@ -85,8 +85,8 @@ module TT
     lookup_key_method :c, :common
 
     def initialize(ns, section = nil)
-      @lookup = Utils.lookup(self.class.settings[:orm])
-      @err_lookup = Utils.lookup(self.class.settings[:orm], :messages)
+      @lookup = Utils.lookup(self.class.settings[:prefix])
+      @err_lookup = Utils.lookup(self.class.settings[:prefix], :messages)
 
       ns = Utils.to_parts(ns).join('.')
       @config = { ns: ns, root: (section ? "#{ ns }.#{ section }" : ns) }
@@ -210,6 +210,6 @@ end
 
 if defined?(ActiveRecord)
   ActiveSupport.on_load(:active_record) do
-    TT.config(orm: :activerecord)
+    TT.config(prefix: :activerecord)
   end
 end

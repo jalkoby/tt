@@ -9,7 +9,7 @@ ViewTranslator = TT.fork do
 end
 
 ARTranslator = TT.fork do
-  settings orm: :activerecord, downcase: lambda { |str, locale| str.mb_chars.downcase }
+  settings prefix: :activerecord
 end
 
 I18n.backend = I18n::Backend::Simple.new
