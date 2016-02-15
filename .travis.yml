@@ -3,9 +3,9 @@ rvm:
   - rbx-2
   - jruby
   - 2.0.0
-  - 2.1.x
-  - 2.2.x
-  - 2.3.x
+  - 2.1
+  - 2.2
+  - 2.3
 gemfile:
   - gemfiles/Gemfile.actionpack-3.0.x
   - gemfiles/Gemfile.actionpack-3.1.x
