@@ -177,8 +177,9 @@ module TT
     Class.new(Translator, &block)
   end
 
-  def self.config(&block)
-    Translator.instance_exec(&block)
+  def self.config(options = {}, &block)
+    Translator.settings(options)
+    Translator.instance_exec(&block) if block_given?
   end
 end
 

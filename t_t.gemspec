@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name          = "t_t"
-  spec.version       = "1.0.0"
+  spec.version       = "1.0.1"
   spec.authors       = ["Sergey Pchelintsev"]
   spec.email         = ["mail@sergeyp.me"]
   spec.summary       = %q{An opinioned I18n helper}

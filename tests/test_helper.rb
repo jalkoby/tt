@@ -3,6 +3,8 @@ require "minitest/mock"
 require "rack/test"
 require "action_controller"
 require "t_t"
+require "t_t/action_factory"
+require "t_t/action_macros"
 
 ViewTranslator = TT.fork do
   lookup_key_method :f, :form
