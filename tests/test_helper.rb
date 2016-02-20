@@ -1,17 +1,16 @@
+# emulate activerecord presence
+ActiveRecord = nil
+
 require "minitest/autorun"
 require "minitest/mock"
 require "rack/test"
 require "action_controller"
 require "t_t"
 require "t_t/action_factory"
-require "t_t/action_macros"
 
+ActiveSupport.run_load_hooks(:active_record, self)
 ViewTranslator = TT.fork do
   lookup_key_method :f, :form
-end
-
-ARTranslator = TT.fork do
-  settings prefix: :activerecord
 end
 
 I18n.backend = I18n::Backend::Simple.new

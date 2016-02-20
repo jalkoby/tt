@@ -2,7 +2,7 @@ require 'test_helper'
 
 describe 'Methods related to models' do
   before do
-    @tt = ARTranslator.new("admin/users", "spec")
+    @tt = TT::Translator.new("admin/users", "spec")
   end
 
   describe 'actions' do
@@ -134,7 +134,7 @@ describe 'Methods related to models' do
 
   describe 'resource names' do
     before do
-      @tt = ARTranslator.new('public/people')
+      @tt = TT::Translator.new('public/people')
       load_i18n({
         models: { person: { one: "whatever", other: "whatever" }, user: { one: "User", other: "Users" } },
         activerecord: { models: {
