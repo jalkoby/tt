@@ -97,8 +97,11 @@ module TT
   end
 
   def self.define_actions(*args)
-    @action_factory ||= ActionFactory.new(*args)
-    yield @action_factory
-    @action_factory.as_hash.each { |locale, data| I18n.backend.store_translations(locale, data) }
+    factory = ActionFactory.new(*args)
+    if block_given?
+      yield factory
+      factory.as_hash.each { |locale, data| I18n.backend.store_translations(locale, data) }
+    end
+    factory
   end
 end

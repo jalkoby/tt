@@ -4,11 +4,11 @@ describe 'Built-in macros' do
   it 'injects translations into I18n' do
     I18n.enforce_available_locales = false
     TT.define_actions(:en, :ru) do |f|
-      f.action :store, en: 'Store', ru: 'Сохранить'
+      f.action :store, en: 'Store', ru: 'Store-ru'
     end
 
     assert_equal I18n.t('actions.store.base', locale: :en), 'Store'
-    assert_equal I18n.t('actions.store.base', locale: :ru), 'Сохранить'
+    assert_equal I18n.t('actions.store.base', locale: :ru), 'Store-ru'
     I18n.reload!
   end
 
