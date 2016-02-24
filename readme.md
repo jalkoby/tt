@@ -17,8 +17,8 @@ is to look at [Cheatsheet](./cheatsheet.md). The below is shown a brief overview
 ```Haml
 # en:
 #   actions:
-#     add:
-#       base: "Add a new %{r}"
+#     base:
+#       add: "Add a new %{r}"
 #   attributes:
 #     user:
 #       name: "Name"

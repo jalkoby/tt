@@ -241,12 +241,10 @@ comes on the scene:
 ```ruby
 # en:
 #   actions:
-#     create:
-#       base: "The %{r} has been created"
-#     update:
-#       base: "The %{r} has been updated"
-#     delete:
-#       base: "The %{r} has been deleted"
+#     base:
+#       create: "The %{r} has been created"
+#       update: "The %{r} has been updated"
+#       delete: "The %{r} has been deleted"
 #   models:
 #     user:
 #       one: "User"
@@ -286,9 +284,10 @@ just add a model name key in a action translations:
 ```ruby
 # en:
 #   actions:
-#     create:
-#       base: "The %{r} has been created"
-#       photo: "The %{r} has been uploaded"
+#     base:
+#       create: "The %{r} has been created"
+#     photo:
+#       create: "The %{r} has been uploaded"
 
 tt.a(:create, :user)  # => "The user has been created"
 tt.a(:create, :photo) # => "The photo has been uploaded"

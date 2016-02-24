@@ -101,11 +101,11 @@ en:
         blank: Select at least one task list
   # action related
   actions:
-    choose_few:
-      base: Choose one or more %{rs}
-    create:
-      base: "The %{r} has been created"
-      task: "The %{r} hass been added"
-    select_before:
-      base: "Please choose a %{r} before"
-      icon: "Please choose an %{r} before"
+    base:
+      choose_few: "Choose one or more %{rs}"
+      create: "The %{r} has been created"
+      select_before: "Please choose a %{r} before"
+    task:
+      create: "The %{r} hass been added"
+    icon:
+      select_before: "Please choose an %{r} before"
