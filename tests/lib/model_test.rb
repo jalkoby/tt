@@ -44,7 +44,7 @@ describe 'Methods related to models' do
   describe 'attributes' do
     before do
       load_i18n(attributes: {
-        base:  { name: 'Name', phone: 'Phone', email: 'Email' },
+        name: 'Name', phone: 'Phone', email: 'Email',
         user:  { name: 'Nick', phone: 'Notification phone' },
         admin: { user: { name: 'Contact admin name' } }
       })

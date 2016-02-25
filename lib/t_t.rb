@@ -9,7 +9,7 @@ module TT
 
     DOWNCASE = lambda { |str, locale| (locale == :en) ? str.downcase : str.mb_chars.downcase.to_s }
 
-    def lookup(prefix, base_suffix = :base)
+    def lookup(prefix, base_suffix)
       prefix ? prefix_lookup(prefix, base_suffix) : simple_lookup(base_suffix)
     end
 
@@ -28,7 +28,11 @@ module TT
 
         defaults = []
         defaults << :"#{ type }.#{ parts.last }" if parts.length > 1
-        defaults << :"#{ type }.#{ base_suffix }"
+        if base_suffix
+          defaults << :"#{ type }.#{ base_suffix }"
+        else
+          defaults << type
+        end
 
         [root, defaults]
       end
@@ -47,8 +51,14 @@ module TT
           defaults << :"#{ prefix }.#{ type }.#{ pure_model }"
           defaults << :"#{ type }.#{ pure_model }"
         end
-        defaults << :"#{ prefix }.#{ type }.#{ base_suffix }"
-        defaults << :"#{ type }.#{ base_suffix }"
+
+        if base_suffix
+          defaults << :"#{ prefix }.#{ type }.#{ base_suffix }"
+          defaults << :"#{ type }.#{ base_suffix }"
+        else
+          defaults << :"#{ prefix }.#{ type }"
+          defaults << type
+        end
 
         [root, defaults]
       end
@@ -85,22 +95,25 @@ module TT
     lookup_key_method :c, :common
 
     def initialize(ns, section = nil)
-      @lookup = Utils.lookup(self.class.settings[:prefix])
-      @err_lookup = Utils.lookup(self.class.settings[:prefix], :messages)
+      @lookup   = Utils.lookup(self.class.settings[:prefix], nil)
+      @b_lookup = Utils.lookup(self.class.settings[:prefix], :base)
+      @e_lookup = Utils.lookup(self.class.settings[:prefix], :messages)
 
       ns = Utils.to_parts(ns).join('.')
       @config = { ns: ns, root: (section ? "#{ ns }.#{ section }" : ns) }
       default_model = ns.to_s.singularize
-      [:actions, :attributes, :enums, :models].each do |i|
-        @config[i] = @lookup.call(default_model, i)
-      end
-      @config[:errors] = @err_lookup.call(default_model, :errors)
+
+      @config[:attributes] = @lookup.call(default_model, :attributes)
+      @config[:models]     = @lookup.call(default_model, :models)
+      @config[:actions]    = @b_lookup.call(default_model, :actions)
+      @config[:enums]      = @b_lookup.call(default_model, :enums)
+      @config[:errors]     = @e_lookup.call(default_model, :errors)
 
       @downcase = self.class.settings.fetch(:downcase, Utils::DOWNCASE)
     end
 
     def a(name, model_name = nil, custom = {})
-      path, defaults = _resolve(model_name, :actions, name)
+      path, defaults = _resolve(@b_lookup, model_name, :actions, name)
 
       resource = r(model_name)
       resources = rs(model_name)
@@ -111,12 +124,12 @@ module TT
     end
 
     def attr(name, model_name = nil)
-      path, defaults = _resolve(model_name, :attributes, name)
+      path, defaults = _resolve(@lookup, model_name, :attributes, name)
       I18n.t path, default: defaults
     end
 
     def enum(name, kind, model_name = nil)
-      path, defaults = _resolve(model_name, :enums, "#{ name }.#{ kind }")
+      path, defaults = _resolve(@b_lookup, model_name, :enums, "#{ name }.#{ kind }")
       I18n.t path, default: defaults
     end
 
@@ -132,8 +145,9 @@ module TT
     end
 
     def rs(model_name = nil, count = 10)
-      path, defaults = _resolve(model_name, :models)
-      I18n.t path, default: defaults, count: count
+      path, defaults = _resolve(@lookup, model_name, :models, nil)
+      # cut from defaults :"#{ orm }.models", :models
+      I18n.t path, default: defaults[0...-2], count: count
     end
 
     def t(key, custom = {})
@@ -147,21 +161,17 @@ module TT
       @config
     end
 
-    def _resolve(model_name, type, key = nil)
-      _resolve_with_lookup(@lookup, model_name, type, key)
-    end
-
     def _resolve_errors(model_name, attr_name, error_name)
       if attr_name == :base
-        _resolve_with_lookup(@err_lookup, model_name, :errors, error_name)
+        _resolve(@e_lookup, model_name, :errors, error_name)
       else
-        path, _defaults = _resolve(model_name, :errors, "#{ attr_name }.#{ error_name }")
+        path, _defaults = _resolve(@lookup, model_name, :errors, "#{ attr_name }.#{ error_name }")
         defaults = _defaults + ["errors.messages.#{ error_name }".to_sym]
         return path, defaults
       end
     end
 
-    def _resolve_with_lookup(lookup, model_name, type, key)
+    def _resolve(lookup, model_name, type, key)
       paths = model_name ? lookup.call(model_name, type) : _config.fetch(type)
       if key
         return "#{ paths.first }.#{ key }", paths.last.map { |i| :"#{ i }.#{ key }" }

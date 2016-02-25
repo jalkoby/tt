@@ -84,8 +84,7 @@ You probably know that `active_model` based classes have handy method **#human_a
 ```ruby
 # en:
 #   attributes:
-#     base:
-#       email: "Email"
+#     email: "Email"
 #     user:
 #       email: "Login / Email"
 
