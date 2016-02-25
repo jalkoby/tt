@@ -292,7 +292,9 @@ just add a model name key in a action translations:
 tt.a(:create, :user)  # => "The user has been created"
 tt.a(:create, :photo) # => "The photo has been uploaded"
 ```
-Take a look at [examples folder](./examples/) for a more examples.
+
+To simplify generation of translations Dos-T provides [the action factory](./docs/action_factory.md).
+For more examples take a look [here](./examples/).
 
 ## Custom shortcuts
 

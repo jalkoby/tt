@@ -24,3 +24,12 @@ class Minitest::Spec
     I18n.backend.store_translations(:en, data)
   end
 end
+
+class << Minitest::Spec
+  alias :focus :it
+
+  if ENV.has_key?('FOCUS')
+    def it(*args, &block)
+    end
+  end
+end

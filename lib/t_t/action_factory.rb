@@ -1,35 +1,45 @@
-require 't_t/action_macros'
+require 't_t/builtin_rules'
 
 module TT
   class ActionFactory
+    Action = Struct.new(:base, :rules)
+    Option = Struct.new(:key, :meta) do
+      def self.parse(list)
+        list.flat_map do |item|
+          item.respond_to?(:map) ? item.map { |key, meta| new(key, meta) } : new(item)
+        end
+      end
+    end
+
     class Locale
       def initialize
         @rules = {}
         @list  = {}
-        @meta  = {}
       end
 
-      def set_rule(k, &block)
-        @rules[k] = block
-        @list[k]  = []
-        @meta[k]  = {}
+      def rule(key, &block)
+        @rules[key] = block
+        @list[key]  = []
       end
 
-      def use_rule_for(k, data)
-        if data.is_a?(Hash)
-          @meta[k] = @meta.fetch(k).merge(data)
-          @list[k].concat(data.keys)
-        else
-          @list[k].concat(data)
-        end
+      def use_rule_for(key, *list)
+        @list[key].concat(Option.parse(list))
       end
 
-      def generate(rkey, config)
-        rule = @rules.fetch(rkey)
+      def knows_rule?(key)
+        @rules.has_key?(key)
+      end
 
-        @list.fetch(rkey).inject({}) do |r, mkey|
-          r[mkey] = rule.call(config, @meta.fetch(rkey).fetch(mkey, {}))
-          r
+      def compile(action)
+        action.rules.inject(base: action.base) do |result, a_option|
+          rule = @rules.fetch(a_option.key)
+
+          @list.fetch(a_option.key).each do |r_option|
+            base = result.fetch(r_option.key, action.base)
+            result[r_option.key] = rule.call(base, a_option.meta, r_option.meta)
+          end
+
+          result
         end
       end
     end
@@ -37,71 +47,91 @@ module TT
     def initialize(*locales)
       @actions = {}
       @locales = {}
-      @macro = {}
       @exceptions = {}
 
-      locales.each do |l|
-        @actions[l] = {}
-        @exceptions[l] = {}
-        @locales[l] = Locale.new
+      locales.each do |lkey|
+        @actions[lkey]    = {}
+        @exceptions[lkey] = {}
+        @locales[lkey]    = Locale.new
       end
     end
 
-    def action(key, list)
-      list.each do |locale, config|
-        config = { base: config } if config.is_a?(String)
-        @actions[locale][key] = config
+    def for(key, &block)
+      yield @locales.fetch(key) { raise_error "`#{ key }` is unknown" }
+    end
+
+    def activate_rules(*list)
+      list.each { |rkey| BuiltinRules.send(rkey, self) }
+    end
+
+    def add(akey, list)
+      @locales.each do |lkey, locale|
+        unless action = list[lkey]
+          raise_error "action `#{ akey }` is missing for `#{ lkey }` locale"
+        end
+
+        action = Action.new(action, []) if action.is_a?(String)
+
+        if action.is_a?(Action)
+          action.rules.each do |rule|
+            next if locale.knows_rule?(rule.key)
+            raise_error "`#{ rule.key }` is an unknown rule for `#{ lkey }` locale"
+          end
+        else
+          raise_error "the value of `#{ akey }` action for `#{ lkey }` locale has a wrong type"
+        end
+
+        @actions[lkey][akey] = action
       end
     end
 
-    def add_macro(key, &block)
-      @macro[key] = block
+    def with_rules(base, *list)
+      Action.new(base, Option.parse(list))
     end
 
     def add_exception(mkey, schema)
-      schema.each do |key, list|
-        list.each do |lkey, text|
-          @exceptions[lkey][key] ||= {}
-          @exceptions[lkey][key][mkey] = text
+      schema.each do |lkey, list|
+        raise_error("`#{ lkey }` is an unknown locale") unless @locales.has_key?(lkey)
+
+        list.each do |akey, str|
+          unless @actions[lkey].has_key?(akey)
+            raise_error "`#{ akey }` action is not specified. Do it before add an exception"
+          end
+
+          @exceptions[lkey][akey] ||= {}
+          @exceptions[lkey][akey][mkey] = str
         end
       end
-    end
-
-    def macro(key, *args)
-      @macro.fetch(key).call(*args)
-    end
-
-    def set_rule(lkey, *args, &block)
-      @locales.fetch(lkey).set_rule(*args, &block)
-    end
-
-    def use_rule_for(lkey, *args, &block)
-      @locales.fetch(lkey).use_rule_for(*args, &block)
     end
 
     def as_hash
       @actions.inject({}) do |hash, (lkey, list)|
         locale = @locales.fetch(lkey)
 
-        actions = list.inject({}) do |ra, (key, config)|
-          base = config.fetch(:base)
-          action = Array(config[:rules]).inject(base: base) { |r, rkey| r.merge(locale.generate(rkey, config)) }
-          ra[key] = action.merge(@exceptions[lkey].fetch(key, {}))
-          ra
+        actions = list.inject({}) do |result, (akey, action)|
+          keys = locale.compile(action).merge!(@exceptions[lkey].fetch(akey, {}))
+          keys.each do |mkey, str|
+            result[mkey] = {} unless result.has_key?(mkey)
+            result[mkey][akey] = str
+          end
+
+          result
         end
 
-        hash[lkey] = { actions: actions }
-        hash
+        hash.merge!(lkey => { actions: actions })
       end
+    end
+
+    private
+
+    def raise_error(base)
+      raise ArgumentError, "t_t: #{ base }"
     end
   end
 
   def self.define_actions(*args)
-    factory = ActionFactory.new(*args)
-    if block_given?
-      yield factory
-      factory.as_hash.each { |locale, data| I18n.backend.store_translations(locale, data) }
-    end
-    factory
+    f = ActionFactory.new(*args)
+    yield f
+    f.as_hash
   end
 end
