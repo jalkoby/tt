@@ -94,3 +94,12 @@ Just add `gem "t_t"` into your Gemfile and run `bundle`.
 ## Requirements
 
 Dos-T is tested against Ruby 1.9.3+. If your application uses Ruby on Rails the framework version should be 3.2+
+
+## Changelog
+
+- 1.1.0:
+  - Added [the action factory](./docs/action_factory.md)
+  - Improve #attr, #r, #rs methods to make them more compatible with ActiveModel methods
+  - Fix a documentation mismatching
+- 1.0.1
+  - fix the activerecord integration
