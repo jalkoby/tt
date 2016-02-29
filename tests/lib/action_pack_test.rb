@@ -11,7 +11,7 @@ describe "ActionPack integration" do
   end
 
   it 'returns tt instance if the method was called without args' do
-    assert_equal @controller.tt.class, TT::Translator
+    assert_equal @controller.tt.class, TT::Rails
   end
 
   it 'calls #t if args were passed' do

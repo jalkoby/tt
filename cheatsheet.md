@@ -317,13 +317,13 @@ all it's not a problem. Let's look at a possible cases:
 
 ### You don't have ActionPack or want to use Dos-T outside the views
 
-`tt` is an instance of `TT::Translator`. To create a variable you need `namespace` & `section` (optional) keys. In the rails
+`tt` is an instance of `TT::Base`. To create a variable you need `namespace` & `section` (optional) keys. In the rails
 environment it's `controller_path` and `action_name`.
 
 ```ruby
 class EmailApp < Sinatra::Base
   before do
-    @tt = TT::Translator.new('emails')
+    @tt = TT::Base.new('emails')
   end
 
   post '/' do
@@ -336,7 +336,7 @@ class EmailSender
   attr_reader :tt
 
   def initialize
-    @tt = TT::Translator.new('services/email_sender')
+    @tt = TT::Base.new('services/email_sender')
   end
 
   def work
@@ -353,5 +353,7 @@ end
 Just specify an orm i18n scope:
 ```ruby
 # app/config/tt.rb
+
+# activerecord and mongoid is supported out of the box
 TT.config(prefix: :mongoid)
 ```
