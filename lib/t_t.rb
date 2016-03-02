@@ -38,6 +38,4 @@ module TT
   end
 end
 
-if defined?(ActionPack)
-  require 't_t/rails'
-end
+require 't_t/rails' if defined?(Rails)

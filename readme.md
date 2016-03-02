@@ -87,6 +87,12 @@ The result will be the next:
 = link_to 'Add a new user', new_user_path
 ```
 
+## Additional features
+
+#### [The action factory](./docs/action_factory.md)
+
+#### [Synchronisation of a translation files](./docs/synchronisation.md)
+
 ## Setup
 
 Just add `gem "t_t"` into your Gemfile and run `bundle`.

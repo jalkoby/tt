@@ -54,18 +54,23 @@ describe 'I18n synchronisation' do
     end
 
     TT::I18nSync::FileGroup.stub(:new, proc { |*args| groupMock.new(*args) }) do
-      sync = TT::I18nSync.new(['de', 'es', 'en-US'], [
+      sync = TT::I18nSync.new('de', [
         'config/locales/fr.yml', 'config/locales/views.bg.yml', 'config/locales/models/orm.nl.yml',
         'config/locales/de.yml', 'config/locales/views.de.yml', 'config/locales/models/orm.en-US.yml',
         'config/locales/es.yml', 'config/locales/views.en-US.yml', 'config/locales/models/orm.de.yml',
-        'config/locales/en-US.yml', 'config/locales/views.es.yml', 'config/locales/models/orm.es.yml'
+        'config/locales/en-US.yml', 'config/locales/views.es.yml', 'config/locales/models/orm.es.yml',
+        'config/locales/fix.en-US.yml', 'config/locales/skip.de.yml'
       ])
 
       assert_equal 3, sync.groups.length
-      assert sync.groups.all? { |g| g.locale == 'de' && g.list.keys == ['es', 'en-US'] }
+
       sync.groups[0].tap do |group|
         assert_equal 'config/locales/de.yml', group.standard
-        assert_equal({ 'es' => 'config/locales/es.yml', 'en-US' => 'config/locales/en-US.yml' }, group.list)
+        assert_equal [
+          ['en-US', 'config/locales/en-US.yml'],
+          ['es', 'config/locales/es.yml'],
+          ['fr', 'config/locales/fr.yml']
+        ], group.list.sort
       end
     end
   end
@@ -76,7 +81,7 @@ describe 'I18n synchronisation' do
       'de' => { 'b' => 'de-b' }
     }
     YAML.stub :load_file, store do
-      sync = TT::I18nSync.new(['en', 'de'], ['en.yml', 'de.yml'])
+      sync = TT::I18nSync.new('en', ['en.yml', 'de.yml'])
       result = sync.missed
 
       assert_equal 1, result.size

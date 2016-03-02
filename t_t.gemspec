@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "i18n", ">= 0.6.0"
   spec.add_dependency "activesupport", ">= 3.0.0"
 
-  spec.add_development_dependency "actionpack", ">= 3.0.0"
+  spec.add_development_dependency "rails", ">= 3.0.0"
   spec.add_development_dependency "bundler", "~> 1.7"
   spec.add_development_dependency "minitest", ">= 4.7"
   spec.add_development_dependency "rack-test"

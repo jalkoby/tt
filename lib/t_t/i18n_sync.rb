@@ -100,9 +100,8 @@ module TT
 
     attr_reader :checker, :groups
 
-    def initialize(locales, files)
+    def initialize(st_locale, files)
       @groups = []
-      main = locales.first
 
       files.inject({}) do |r, file|
         parts = file.split('.')
@@ -112,14 +111,10 @@ module TT
         r[k][l] = file
         r
       end.each_value do |group|
-        next unless locales.all? { |l| group.has_key?(l) }
-
-        list = locales.inject({}) do |r, l|
-          r[l] = group[l] unless l == main
-          r
-        end
-
-        groups << FileGroup.new(main, group[main], list)
+        locales = group.keys
+        next unless locales.include?(st_locale) && locales.size > 1
+        list = group.reject { |l, v| l == st_locale }
+        groups << FileGroup.new(st_locale, group[st_locale], list)
       end
 
       @checker = ActiveSupport::FileUpdateChecker.new(groups.map(&:standard)) { execute }

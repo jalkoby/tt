@@ -1,14 +1,11 @@
-# emulate activerecord presence
-ActiveRecord = nil
-
 require "minitest/autorun"
 require "minitest/mock"
 require "rack/test"
-require "action_controller"
+require "action_controller/railtie"
+require "active_record/railtie"
 require "t_t"
 require "t_t/i18n_sync"
 
-ActiveSupport.run_load_hooks(:active_record, self)
 ViewTranslator = TT.fork do
   lookup_key_method :f, :form
 end
