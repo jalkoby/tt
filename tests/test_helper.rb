@@ -6,7 +6,6 @@ require "minitest/mock"
 require "rack/test"
 require "action_controller"
 require "t_t"
-require "t_t/action_factory"
 require "t_t/i18n_sync"
 
 ActiveSupport.run_load_hooks(:active_record, self)

@@ -1,10 +1,9 @@
 # Overview
 
-Dos-T provides a factory (not required by default) to generate 'action'-translations in a few lines.
+Dos-T provides the factory to generate 'action'-translations in a few lines.
 
 ```ruby
 # config/locales/actions.rb
-require 't_t/action_factory'
 
 TT.define_actions(:en, :de) do |f|
   f.add :see_all, en: "See all %{rs}", de: "Siehe alle %{RS}"
@@ -17,6 +16,7 @@ texts. The most popular case is an English "a/an" rule. For example, an applicat
 
 ```ruby
 # config/locales/actions.en.yml
+
 en:
   actions:
     base:
@@ -38,14 +38,13 @@ can teach DSL some grammar and it will generates all translation for you:
 
 ```ruby
 # config/locales/actions.rb
-require 't_t/action_factory'
 
 TT.define_actions(:en) do |f|
   f.for(:en) do |l|
     # defines `a/an` rule for English where:
     # base   - a base action translation or a result of the previous rule processing
-    # a_meta - a action-related metadata (could be specified on adding an action)
-    # r_meta - a resource-related metadata (could be specified on marking a resource to use a rule)
+    # a_meta - a action-related metadata (specified on adding an action)
+    # r_meta - a resource-related metadata (specified on marking a resource to use a rule)
     l.rule(:an) { |base, a_meta, r_meta| a_meta }
 
     # registers a resources which should use the rule
@@ -62,7 +61,6 @@ end
 Here an another example with a more complex grammar rules:
 
 ```ruby
-require 't_t/action_factory'
 # de:
 #   models:
 #     article:

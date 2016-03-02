@@ -1,5 +1,3 @@
-require 't_t/builtin_rules'
-
 module TT
   class ActionFactory
     Action = Struct.new(:base, :rules)
@@ -61,6 +59,7 @@ module TT
     end
 
     def activate_rules(*list)
+      require 't_t/builtin_rules'
       list.each { |rkey| BuiltinRules.send(rkey, self) }
     end
 
@@ -121,11 +120,5 @@ module TT
         hash.merge!(lkey => { actions: actions })
       end
     end
-  end
-
-  def self.define_actions(*args)
-    f = ActionFactory.new(*args)
-    yield f
-    f.as_hash
   end
 end

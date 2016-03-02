@@ -23,6 +23,13 @@ module TT
     raise ArgumentError, "t_t: #{ base }"
   end
 
+  def self.define_actions(*args)
+    require "t_t/action_factory"
+    f = ActionFactory.new(*args)
+    yield f
+    f.as_hash
+  end
+
   def self.const_missing(name)
     super unless name.to_s == 'Translator'
     puts ""
