@@ -88,10 +88,10 @@ module TT
       end
 
       def missed
-        flat_list = list.inject({}) { |r, (l, path)| r[l] = Utils.flat_file(path, l); r }
+        flat_list = list.inject({}) { |r, (l, path)| r.merge!(l => Utils.flat_file(path, l)) }
 
         Utils.flat_file(standard, st_locale).inject([]) do |list, (k, st_v)|
-          item = flat_list.inject({ st_locale => st_v }) { |r, (l, h)| r[l] = h[k]; r }
+          item = flat_list.inject({ st_locale => st_v }) { |r, (l, h)| r.merge!(l => h[k]) }
           list << item if item.any? { |l, v| v.nil? }
           list
         end
