@@ -81,7 +81,7 @@ module TT
       if custom
         unknown = custom.keys.detect { |key| ![:downcase, :prefix].include?(key) }
         if unknown
-          raise ArgumentError, "TT doesn't know `#{ unknown }` option in the configuration"
+          TT.raise_error "`#{ unknown }` is a wrong key in the configuration"
         else
           @settings.merge!(custom)
         end

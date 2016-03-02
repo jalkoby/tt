@@ -124,8 +124,8 @@ For other `active_model` based orms please specify configuration in an initializ
 #   attributes:
 #     user: "Email"
 
-# app/config/tt.rb
-TT.config(prefix: :mongoid)
+# app/config/t_t.rb
+TT::Rails.config(prefix: :mongoid)
 ```
 
 ## Resources
@@ -302,8 +302,8 @@ For example, words related to a user tips is good to place into `tips`, words re
 the gem provides a configuration block:
 
 ```ruby
-# app/config/tt.rb
-TT.config do
+# app/config/t_t.rb
+TT::Rails.config do
   lookup_key_method :tip, :tips
   lookup_key_method :f, :forms
 end
@@ -352,8 +352,8 @@ end
 
 Just specify an orm i18n scope:
 ```ruby
-# app/config/tt.rb
+# app/config/t_t.rb
 
 # activerecord and mongoid is supported out of the box
-TT.config(prefix: :mongoid)
+TT::Rails.config(prefix: :mongoid)
 ```

@@ -18,6 +18,17 @@ module TT
   def self.base=(value)
     @base = value
   end
+
+  def self.raise_error(base)
+    raise ArgumentError, "t_t: #{ base }"
+  end
+
+  def self.const_missing(name)
+    super unless name.to_s == 'Translator'
+    puts ""
+    puts "t_t: TT::Translator is deprecated. Please, use #{ base } instead"
+    base
+  end
 end
 
 if defined?(ActionPack)

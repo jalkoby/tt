@@ -1,3 +1,26 @@
+options = {}
+if defined?(ActiveRecord)
+  options[:prefix] = :activerecord
+elsif defined?(Mongoid)
+  options[:prefix] = :mongoid
+end
+
+TT.base = TT::Rails = TT.fork(options) do
+  def self.sync
+    @sync
+  end
+
+  def self.sync_files(*locales)
+    require 't_t/i18n_sync'
+    options = locales.last.is_a?(Hash) ? locales.pop : {}
+    files = Dir.glob(options.fetch(:path, 'config/locales/**/*.yml'))
+    @sync = ::TT::I18nSync.new(locales.map(&:to_s), files)
+    checker = @sync.checker
+    ::Rails.application.reloaders << checker
+    ActionDispatch::Reloader.to_prepare { checker.execute_if_updated }
+  end
+end
+
 module TT
   module Helper
     extend ::ActiveSupport::Concern
@@ -15,14 +38,6 @@ module TT
     end
   end
 end
-
-options = {}
-if defined?(ActiveRecord)
-  options[:prefix] = :activerecord
-elsif defined?(Mongoid)
-  options[:prefix] = :mongoid
-end
-TT.base = TT::Rails = TT.fork(options)
 
 ActiveSupport.on_load(:action_controller) do
   include ::TT::Helper

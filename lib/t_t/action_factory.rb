@@ -57,7 +57,7 @@ module TT
     end
 
     def for(key, &block)
-      yield @locales.fetch(key) { raise_error "`#{ key }` is unknown" }
+      yield @locales.fetch(key) { TT.raise_error "`#{ key }` is unknown" }
     end
 
     def activate_rules(*list)
@@ -67,7 +67,7 @@ module TT
     def add(akey, list)
       @locales.each do |lkey, locale|
         unless action = list[lkey]
-          raise_error "action `#{ akey }` is missing for `#{ lkey }` locale"
+          TT.raise_error "action `#{ akey }` is missing for `#{ lkey }` locale"
         end
 
         action = Action.new(action, []) if action.is_a?(String)
@@ -75,10 +75,10 @@ module TT
         if action.is_a?(Action)
           action.rules.each do |rule|
             next if locale.knows_rule?(rule.key)
-            raise_error "`#{ rule.key }` is an unknown rule for `#{ lkey }` locale"
+            TT.raise_error "`#{ rule.key }` is an unknown rule for `#{ lkey }` locale"
           end
         else
-          raise_error "the value of `#{ akey }` action for `#{ lkey }` locale has a wrong type"
+          TT.raise_error "the value of `#{ akey }` action for `#{ lkey }` locale has a wrong type"
         end
 
         @actions[lkey][akey] = action
@@ -91,11 +91,11 @@ module TT
 
     def add_exception(mkey, schema)
       schema.each do |lkey, list|
-        raise_error("`#{ lkey }` is an unknown locale") unless @locales.has_key?(lkey)
+        TT.raise_error("`#{ lkey }` is an unknown locale") unless @locales.has_key?(lkey)
 
         list.each do |akey, str|
           unless @actions[lkey].has_key?(akey)
-            raise_error "`#{ akey }` action is not specified. Do it before add an exception"
+            TT.raise_error "`#{ akey }` action is not specified. Do it before add an exception"
           end
 
           @exceptions[lkey][akey] ||= {}
@@ -120,12 +120,6 @@ module TT
 
         hash.merge!(lkey => { actions: actions })
       end
-    end
-
-    private
-
-    def raise_error(base)
-      raise ArgumentError, "t_t: #{ base }"
     end
   end
 
