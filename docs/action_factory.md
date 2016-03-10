@@ -145,7 +145,7 @@ The generated list of actions is present in the following table:
 |comment|Neuen Komment hinzufügen|Den Komment bearbeiten|Alle Komments löschen|Добавить комментарий|Изменить комментарий|Удалить комментарии|
 |list|Neue Liste hinzufügen|Die Liste bearbeiten|Alle Listen löschen|Добавить список|Изменить список|Удалить списки|
 |log|Neues Protokoll hinzufügen|Das Protokoll bearbeiten|Alle Protokolle löschen|Добавить запись|Изменить запись|Удалить записи|
-|person|Neue Person hinzufügen|Die Person bearbeiten|Alle Personen löschen|Добавить персону|Изменить персону|Удалить персон|
+|person|Neue Person hinzufügen|Die Person bearbeiten|Alle Personen löschen|Добавить персону|Изменить персону|Удалить персону|
 
 With the factory you get a flexibility in resource renaming - just change of a few lines. A possibility to make a typo
 in a similar translations down to zero. All shown rules a included in the factory, but not activated.
