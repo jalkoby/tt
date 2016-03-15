@@ -182,4 +182,12 @@ module TT
 
     ActiveSupport.run_load_hooks(:tt, self)
   end
+
+  module Model
+    private
+
+    def tt
+      @tt ||= ::TT.base.new(self.class.to_s)
+    end
+  end
 end
