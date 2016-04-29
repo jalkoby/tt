@@ -79,7 +79,7 @@ module TT
 
       def execute
         file_updated_at = File.mtime(standard)
-        return if file_updated_at == @prev_updated_at
+        return if defined?(@prev_updated_at) && file_updated_at == @prev_updated_at
 
         st_source = Utils.load_file(standard, st_locale)
         list.each { |l, path| Utils.sync_file(path, l, st_source) }
@@ -92,7 +92,12 @@ module TT
 
         Utils.flat_file(standard, st_locale).inject([]) do |list, (k, st_v)|
           item = flat_list.inject({ st_locale => st_v }) { |r, (l, h)| r.merge!(l => h[k]) }
-          list << item if item.any? { |l, v| v.nil? }
+
+          if item.any? { |_, v| v.nil? || v.to_s.include?(MARK) }
+            item.each { |l, v| item[l] = nil if v.to_s.include?(MARK) }
+            list << item
+          end
+
           list
         end
       end

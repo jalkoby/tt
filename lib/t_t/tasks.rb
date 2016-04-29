@@ -13,7 +13,11 @@ namespace :tt do
     if sync = TT::Rails.sync
       sync.missed.each do |group, list|
         puts "# #{ group }"
-        puts line.inject("") { |r, (k, v)| r + "#{ k.upcase }: #{ v.to_s.encode('utf-8') }\n" }
+
+        list.each do |line|
+          puts line.inject("") { |r, (k, v)| r + "#{ k.upcase }: #{ v.to_s.encode('utf-8') }\n" }
+        end
+
         puts '---'
       end
     else

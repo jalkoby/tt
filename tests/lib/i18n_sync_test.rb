@@ -78,7 +78,7 @@ describe 'I18n synchronisation' do
   it 'shows all missed translations' do
     store = {
       'en' => { 'a' => 'a', 'b' => 'b', 'c' => { 'd' => 'd' } },
-      'de' => { 'b' => 'de-b' }
+      'de' => { 'a' => ':t_t: a', 'b' => 'de-b' }
     }
     YAML.stub :load_file, store do
       sync = TT::I18nSync.new('en', ['en.yml', 'de.yml'])
