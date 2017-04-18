@@ -41,6 +41,23 @@ describe 'Methods related to models' do
     end
   end
 
+  describe 'cheatsheet actions' do
+    before do
+      load_i18n({
+        actions: {
+          create: {
+            base: 'The %{r} has been created'
+          }
+        },
+        models: { admin: { user: { one: "Admin", other: "Admins" } } }
+      })
+    end
+
+    it 'returns a valid create message' do
+      assert_equal @tt.a(:create), 'The admin has been created'
+    end
+  end
+
   describe 'attributes' do
     before do
       load_i18n(attributes: {
