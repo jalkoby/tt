@@ -7,6 +7,7 @@ end
 describe "ActionPack integration" do
   before do
     @controller = TTController.new
+    @controller.response = ActionDispatch::Response.new
     @controller.run_callbacks(:process_action)
   end
 

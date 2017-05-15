@@ -17,9 +17,10 @@ module TT
     extend ::ActiveSupport::Concern
 
     included do
-      helper_method :tt
+      helper_method(:tt) if respond_to?(:helper_method)
 
-      prepend_before_filter { instance_variable_set(:@tt, ::TT::Rails.new(controller_path, action_name)) }
+      meth_name = respond_to?(:prepend_before_action) ? :prepend_before_action : :prepend_before_filter
+      public_send(meth_name) { instance_variable_set(:@tt, ::TT::Rails.new(controller_path, action_name)) }
     end
 
     private
