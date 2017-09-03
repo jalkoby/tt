@@ -39,14 +39,18 @@ module TT
 
         locale = :en
         glob = 'config/locales/**/*.yml'
+        mark = ':t_t: '
         if options.is_a?(Symbol) || options.is_a?(String)
           locale = options
         elsif options.is_a?(Hash)
           locale = options[:locale] if options.has_key?(:locale)
           glob = options[:glob] if options.has_key?(:glob)
+          if options[:mark]
+            mark = (options[:mark] == :space) ? "\u200B" : options[:mark]
+          end
         end
 
-        file_sync = ::TT::I18nSync.new(locale.to_s, Dir.glob(glob))
+        file_sync = ::TT::I18nSync.new(locale.to_s, Dir.glob(glob), mark)
         TT::Rails.sync(file_sync)
         ::Rails.application.reloaders << file_sync.checker
         ActionDispatch::Reloader.to_prepare { file_sync.checker.execute_if_updated }

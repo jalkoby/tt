@@ -29,6 +29,19 @@ Rails.application.configure do
 end
 ```
 
+By default missing translations marked as ":t_t: translations". You can override it:
+
+```ruby
+# config/environments/development.rb
+
+Rails.application.configure do
+  config.tt.sync = { locale: :en, mark: "you custom string" }
+
+  # sets mark to zero width space symbol
+  config.tt.sync = { locale: :en, mark: :space }
+end
+```
+
 Also you can synchronise files without a page reload. Add the next line at the bottom `%rails_root%/Rakefile`:
 
 ```ruby

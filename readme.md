@@ -102,6 +102,10 @@ Just add `gem "t_t"` into your Gemfile and run `bundle`.
 Dos-T is tested against Ruby 1.9.3+ & JRuby(1.9+ compatible). If your application uses Ruby on Rails the framework version should be 3.2+
 
 ## Changelog
+- 1.3.0
+  - Allow specify a custom mark for locale file synchonization
+- 1.2.2
+  - Fix rails 5 integration
 - 1.2.0
   - Deprecate TT::Translator in favour of TT::Base & TT::Rails
   - Introduce a real-time watcher for [translation file synchronisation](./docs/synchronisation.md)

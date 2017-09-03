@@ -3,8 +3,6 @@ require 'yaml'
 
 module TT
   class I18nSync
-    MARK = ":t_t: "
-
     module Utils
       extend self
 
@@ -29,11 +27,11 @@ module TT
         end
       end
 
-      def sync_file(path, locale, standard)
+      def sync_file(path, locale, standard, mark)
         old_review = {}
         source = load_file(path, locale) { |content| old_review.merge!(content.fetch('review', {})) }
         new_review = {}
-        content = { locale => sync_level(standard, source, new_review) }
+        content = { locale => sync_level(standard, source, new_review, mark) }
         review = old_review.merge(flat_hash(new_review))
         content['review'] = review unless review.empty?
         write_file(path, content)
@@ -45,19 +43,19 @@ module TT
 
       private
 
-      def sync_level(st_level, source, review)
+      def sync_level(st_level, source, review, mark)
         level = st_level.inject({}) do |r, (key, st_node)|
           node = source[key]
 
           r[key] = case st_node
           when Hash
             sub_review = {}
-            sub_level = sync_level(st_node, (node.is_a?(Hash) ? node : {}), sub_review)
+            sub_level = sync_level(st_node, (node.is_a?(Hash) ? node : {}), sub_review, mark)
             review[key] = sub_review unless sub_review.empty?
             sub_level
-          when Array then node.is_a?(Array) ? node : st_node.map { |v| "#{ MARK }#{ v }" }
+          when Array then node.is_a?(Array) ? node : st_node.map { |v| "#{ mark }#{ v }" }
           else
-            node.nil? ? "#{ MARK }#{ st_node }" : node
+            node.nil? ? "#{ mark }#{ st_node }" : node
           end
           r
         end
@@ -69,12 +67,13 @@ module TT
     end
 
     class FileGroup
-      attr_reader :st_locale, :standard, :list
+      attr_reader :st_locale, :standard, :list, :mark
 
-      def initialize(st_locale, standard, list)
+      def initialize(st_locale, standard, list, mark)
         @st_locale = st_locale
         @standard = standard
         @list = list
+        @mark = mark
       end
 
       def execute
@@ -82,7 +81,7 @@ module TT
         return if defined?(@prev_updated_at) && file_updated_at == @prev_updated_at
 
         st_source = Utils.load_file(standard, st_locale)
-        list.each { |l, path| Utils.sync_file(path, l, st_source) }
+        list.each { |l, path| Utils.sync_file(path, l, st_source, mark) }
 
         @prev_updated_at = file_updated_at
       end
@@ -93,8 +92,8 @@ module TT
         Utils.flat_file(standard, st_locale).inject([]) do |list, (k, st_v)|
           item = flat_list.inject({ st_locale => st_v }) { |r, (l, h)| r.merge!(l => h[k]) }
 
-          if item.any? { |_, v| v.nil? || v.to_s.include?(MARK) }
-            item.each { |l, v| item[l] = nil if v.to_s.include?(MARK) }
+          if item.any? { |_, v| v.nil? || v.to_s.include?(mark) }
+            item.each { |l, v| item[l] = nil if v.to_s.include?(mark) }
             list << item
           end
 
@@ -105,7 +104,7 @@ module TT
 
     attr_reader :checker, :groups
 
-    def initialize(st_locale, files)
+    def initialize(st_locale, files, mark)
       @groups = []
 
       files.inject({}) do |r, file|
@@ -119,7 +118,7 @@ module TT
         locales = group.keys
         next unless locales.include?(st_locale) && locales.size > 1
         list = group.reject { |l, v| l == st_locale }
-        groups << FileGroup.new(st_locale, group[st_locale], list)
+        groups << FileGroup.new(st_locale, group[st_locale], list, mark)
       end
 
       @checker = ActiveSupport::FileUpdateChecker.new(groups.map(&:standard)) { execute }

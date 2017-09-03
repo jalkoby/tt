@@ -8,7 +8,7 @@ describe 'I18n synchronisation' do
     }
 
     YAML.stub :load_file, store do
-      group = TT::I18nSync::FileGroup.new('en', __FILE__, { 'de' => 'de.yml' })
+      group = TT::I18nSync::FileGroup.new('en', __FILE__, { 'de' => 'de.yml' }, ':t_t: ')
       expectation = lambda do |path, content|
         assert_equal path, 'de.yml'
         assert_equal content, {
@@ -35,7 +35,7 @@ describe 'I18n synchronisation' do
       'de' => { 'b' => 'de-b' }
     }
     YAML.stub :load_file, store do
-      group = TT::I18nSync::FileGroup.new('de', __FILE__, { 'en' => 'en.yml' })
+      group = TT::I18nSync::FileGroup.new('de', __FILE__, { 'en' => 'en.yml' }, ':t_t: ')
       expectation = lambda do |path, content|
         assert_equal path, 'en.yml'
         assert_equal content['en'], { 'b' => 'b' }
@@ -48,7 +48,7 @@ describe 'I18n synchronisation' do
   end
 
   it 'combines files into a full groups' do
-    groupMock = Struct.new(:locale, :standard, :list) do
+    groupMock = Struct.new(:locale, :standard, :list, :mark) do
       def execute
       end
     end
@@ -60,7 +60,7 @@ describe 'I18n synchronisation' do
         'config/locales/es.yml', 'config/locales/views.en-US.yml', 'config/locales/models/orm.de.yml',
         'config/locales/en-US.yml', 'config/locales/views.es.yml', 'config/locales/models/orm.es.yml',
         'config/locales/fix.en-US.yml', 'config/locales/skip.de.yml'
-      ])
+      ], ':t_t: ')
 
       assert_equal 3, sync.groups.length
 
@@ -81,7 +81,7 @@ describe 'I18n synchronisation' do
       'de' => { 'a' => ':t_t: a', 'b' => 'de-b' }
     }
     YAML.stub :load_file, store do
-      sync = TT::I18nSync.new('en', ['en.yml', 'de.yml'])
+      sync = TT::I18nSync.new('en', ['en.yml', 'de.yml'], ':t_t: ')
       result = sync.missed
 
       assert_equal 1, result.size
