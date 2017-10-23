@@ -9,17 +9,10 @@ namespace :tt do
   end
 
   desc "Shows a missed keys in the translation file groups"
-  task :m => [:s] do
+  task :m, [:format] => [:s] do |t, args|
     if sync = TT::Rails.sync
-      sync.missed.each do |group, list|
-        puts "# #{ group }"
-
-        list.each do |line|
-          puts line.inject("") { |r, (k, v)| r + "#{ k.upcase }: #{ v.to_s.encode('utf-8') }\n" }
-        end
-
-        puts '---'
-      end
+      require_relative './formaters'
+      TT::Formaters.print(sync.missed, args[:format])
     else
       puts "t_t: Please, setup the synchronisation first"
     end
