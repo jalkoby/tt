@@ -53,7 +53,8 @@ module TT
         file_sync = ::TT::I18nSync.new(locale.to_s, Dir.glob(glob), mark)
         TT::Rails.sync(file_sync)
         ::Rails.application.reloaders << file_sync.checker
-        ActionDispatch::Reloader.to_prepare { file_sync.checker.execute_if_updated }
+        reload_klass = defined?(ActiveSupport::Reloader) ? ActiveSupport::Reloader : ActionDispatch::Reloader
+        reload_klass.to_prepare { file_sync.checker.execute_if_updated }
       end
     end
   end
