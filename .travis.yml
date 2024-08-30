@@ -5,8 +5,11 @@ rvm:
   - 2.3
   - ruby-head
 gemfile:
-  - gemfiles/Gemfile.actionpack-3.2.x
-  - gemfiles/Gemfile.actionpack-4.2.x
-  - gemfiles/Gemfile.actionpack-5.0.x
   - gemfiles/Gemfile.actionpack-5.1.x
+  - gemfiles/Gemfile.actionpack-5.2.x
+  - gemfiles/Gemfile.actionpack-6.0.x
+  - gemfiles/Gemfile.actionpack-6.1.x
+  - gemfiles/Gemfile.actionpack-7.0.x
+  - gemfiles/Gemfile.actionpack-7.1.x
+  - gemfiles/Gemfile.actionpack-7.2.x
   - Gemfile

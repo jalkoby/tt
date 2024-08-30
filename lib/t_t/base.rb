@@ -70,7 +70,7 @@ module TT
       class_eval <<-RUBY
         def #{ meth_name }(key, options = {})
           I18n.t "\#{ _config.fetch(:ns) }.#{ path }.\#{ key }",
-            { default: [:"#{ path }.\#{ key }"] }.merge(options)
+            **{ default: [:"#{ path }.\#{ key }"] }.merge(options)
         end
       RUBY
     end
@@ -117,7 +117,7 @@ module TT
 
       resource = r(model_name)
       resources = rs(model_name)
-      I18n.t path, {
+      I18n.t path, **{
         default: defaults, r: @downcase.call(resource, I18n.locale), R: resource,
         rs: @downcase.call(resources, I18n.locale), RS: resources
       }.merge!(custom)
@@ -137,7 +137,7 @@ module TT
       custom = args.last.is_a?(Hash) ? args.pop : {}
       model_name = args.first
       path, defaults = _resolve_errors(model_name, attr_name, error_name)
-      I18n.t path, { default: defaults }.merge!(custom)
+      I18n.t path, **{ default: defaults }.merge!(custom)
     end
 
     def r(model_name = nil)
@@ -152,7 +152,7 @@ module TT
 
     def t(key, custom = {})
       defaults = [:"#{ _config.fetch(:ns) }.common.#{ key }"].concat(Array(custom[:default]))
-      I18n.t "#{ _config.fetch(:root) }.#{ key  }", custom.merge(default: defaults)
+      I18n.t "#{ _config.fetch(:root) }.#{ key  }", **custom.merge(default: defaults)
     end
 
     private
